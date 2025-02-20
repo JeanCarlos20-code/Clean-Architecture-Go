@@ -46,12 +46,36 @@ GRAPHQL_SERVER_PORT=8080
   - Método: `GET`
   - URL: `http://localhost:8000/order`
   - Parâmetros opcionais: `page` (int), `limit` (int), `sort` (string) -> asc ou desc
+  - Saída de dados:
+  ```json
+  {
+      "id": string,
+      "price": float,
+      "tax": float,
+      "finalPrice": float,
+      "issueDate": date,
+      "typeRequisition": string,
+      "deleteAt": date
+  }
+  ```
 
 ### GraphQL
 - Porta **8080**
 - **Criação de Order:** `createOrder`
 - **Listagem de Orders:** `listOrders`
   - Parâmetros opcionais: `page` (int), `limit` (int), `sort` (string) -> asc ou desc
+  - Saída de dados:
+  ```json
+  {
+      "id": string,
+      "price": float,
+      "tax": float,
+      "finalPrice": float,
+      "issueDate": date,
+      "typeRequisition": string,
+      "deleteAt": date
+  }
+  ```
 
 ### gRPC
 - Porta **50051**
@@ -61,6 +85,18 @@ GRAPHQL_SERVER_PORT=8080
   ```
 - **Listagem de Orders:**
   - Parâmetros opcionais: `page` (int), `limit` (int), `sort` (string) -> asc ou desc
+  - Saída de dados:
+  ```json
+  {
+      "id": string,
+      "price": float,
+      "tax": float,
+      "finalPrice": float,
+      "issueDate": date,
+      "typeRequisition": string,
+      "deleteAt": date
+  }
+  ```
 
 ## Estrutura do Payload
 A criação de `orders` aceita apenas os seguintes dados:
@@ -68,7 +104,7 @@ A criação de `orders` aceita apenas os seguintes dados:
 {
     "price": float,
     "tax": float,
-    "issueDate": "2025-02-19T15:04:05Z"
+    "issueDate": date
 }
 ```
 
