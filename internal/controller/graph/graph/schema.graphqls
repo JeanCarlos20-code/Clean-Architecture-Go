@@ -1,0 +1,28 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+scalar Date
+
+type Order {
+  id: ID!
+  price: Float!
+	tax: Float!
+	finalPrice: Float!
+	issueDate: Date!
+	typeRequisition: String!
+	deleteAt: Date
+}
+
+input NewOrder {
+  price: Float!
+	tax: Float!
+  issueDate: Date!
+}
+
+type Query {
+  listOrders(page: Int, limit: Int, sort: String): [Order!]!
+}
+
+type Mutation {
+  createOrder(input: NewOrder!): Order!
+}
