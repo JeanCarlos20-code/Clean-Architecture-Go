@@ -3,6 +3,8 @@ package database
 import (
 	"context"
 	"database/sql"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/JeanCarlos20-code/CleanArchitecture/internal/core/entities"
@@ -54,22 +56,31 @@ func (r *OrderRepository) List(ctx context.Context, page, limit int, sort string
 	var orders []entities.Order
 	for rows.Next() {
 		var i entities.Order
-		var issueDateBytes []byte
+		var issueDateStr string
 		if err := rows.Scan(
 			&i.ID,
 			&i.Price,
 			&i.Tax,
 			&i.FinalPrice,
-			&issueDateBytes,
+			&issueDateStr,
 			&i.TypeRequisition,
 			&i.DeleteAt,
 		); err != nil {
 			return nil, err
 		}
 
-		if issueDateBytes != nil {
-			issueDateStr := string(issueDateBytes)
-			i.IssueDate, err = time.Parse("2006-01-02 15:04:05", issueDateStr)
+		re := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+[-+]\d{2}:\d{2}$`)
+
+		if re.MatchString(issueDateStr) {
+			parts := strings.Split(issueDateStr, "T")
+			if len(parts) == 2 {
+				timeParts := strings.Split(parts[1], ".")
+				issueDateStr = parts[0] + " " + timeParts[0]
+			}
+		}
+
+		if issueDateStr != "" {
+			i.IssueDate, err = time.Parse(time.DateTime, issueDateStr)
 			if err != nil {
 				return nil, err
 			}
@@ -86,6 +97,7 @@ func (r *OrderRepository) List(ctx context.Context, page, limit int, sort string
 
 func (r *OrderRepository) Save(ctx context.Context, arg *entities.Order) error {
 	err := validator.ValidateOrder(arg)
+
 	if err != nil {
 		return err
 	}
@@ -94,6 +106,10 @@ func (r *OrderRepository) Save(ctx context.Context, arg *entities.Order) error {
 		deleteAt = sql.NullTime{Time: *arg.DeleteAt, Valid: !arg.DeleteAt.IsZero()}
 	} else {
 		deleteAt = sql.NullTime{Valid: false}
+	}
+
+	if err != nil {
+		return err
 	}
 
 	err = r.Queries.Save(ctx, SQLC.SaveParams{

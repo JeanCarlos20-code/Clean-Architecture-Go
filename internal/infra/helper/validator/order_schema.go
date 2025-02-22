@@ -1,7 +1,6 @@
 package validator
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/JeanCarlos20-code/CleanArchitecture/internal/core/entities"
@@ -17,7 +16,6 @@ func ValidateOrder(order *entities.Order) error {
 }
 
 func isFloat(value interface{}) error {
-	fmt.Println(value)
 	_, ok := value.(float64)
 	if !ok {
 		return validation.NewError("validation_float", "O valor deve ser um número decimal")

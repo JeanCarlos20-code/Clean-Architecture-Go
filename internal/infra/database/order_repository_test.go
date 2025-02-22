@@ -48,19 +48,16 @@ func TestMain(m *testing.M) {
 }
 
 func TestSaveIntegration(t *testing.T) {
-	issueDate, err := time.Parse(time.RFC3339, "2025-02-19T15:04:05Z")
-	assert.NoError(t, err)
-
 	order := entities.Order{
 		Price:           150.75,
 		Tax:             15.00,
 		FinalPrice:      165.75,
-		IssueDate:       issueDate,
+		IssueDate:       time.Now(),
 		TypeRequisition: "rest",
 		DeleteAt:        nil,
 	}
 
-	err = repository.Save(context.Background(), &order)
+	err := repository.Save(context.Background(), &order)
 	assert.NoError(t, err)
 
 	var uuid string
@@ -73,7 +70,7 @@ func TestSaveIntegration(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 1, count)
 
-	_, err = testDB.Exec("DELETE FROM orders WHERE id = ?", order.ID)
+	_, err = testDB.Exec("DELETE FROM orders")
 	assert.NoError(t, err)
 }
 
@@ -119,4 +116,7 @@ func TestListOrders_PaginationAndSorting(t *testing.T) {
 	assert.Equal(t, "3", results[2].ID)
 	assert.Equal(t, "2", results[3].ID)
 	assert.Equal(t, "1", results[4].ID)
+
+	_, err = testDB.Exec("DELETE FROM orders")
+	assert.NoError(t, err)
 }

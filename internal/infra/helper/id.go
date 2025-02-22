@@ -4,7 +4,6 @@ import "github.com/google/uuid"
 
 type ID = uuid.UUID
 
-// VO - Value Object
 func NewID() ID {
 	return uuid.New()
 }
